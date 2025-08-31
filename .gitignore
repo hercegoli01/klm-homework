@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Local credentials
+cred.json
+
+# Terraform local junk
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+
+# OS junk
+.DS_Store
+
+# Node/other package managers (ha később lesz frontend)
+node_modules/
