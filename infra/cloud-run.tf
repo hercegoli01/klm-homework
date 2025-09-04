@@ -1,13 +1,14 @@
 resource "google_cloud_run_service" "notes_service" {
+  count    = var.enable_cloudrun ? 1 : 0
   name     = "notes-api"
   location = var.region
   project  = var.project_id
 
   template {
     metadata {
-      annotations = {
-        # Cloud Run → Cloud SQL kapcsolat (socket mount)
-        "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.notes_instance.connection_name
+      annotations = var.use_public_ip ? {} : {
+        "run.googleapis.com/vpc-access-connector" = try(google_vpc_access_connector.notes_connector[0].id, null)
+        "run.googleapis.com/vpc-access-egress"    = "all-traffic"
       }
     }
 
@@ -37,10 +38,9 @@ resource "google_cloud_run_service" "notes_service" {
           value = google_sql_database.notes_db.name
         }
 
-        # opcionális, ha a kód DB_CONN változót vár
         env {
-          name  = "DB_CONN"
-          value = google_sql_database_instance.notes_instance.connection_name
+          name  = "DATABASE_URL"
+          value = var.use_public_ip ? "postgresql://postgres:$(DB_PASSWORD)@${google_sql_database_instance.notes_instance.public_ip_address}:5432/${google_sql_database.notes_db.name}?sslmode=require" : "postgresql://postgres:$(DB_PASSWORD)@${google_sql_database_instance.notes_instance.private_ip_address}:5432/${google_sql_database.notes_db.name}?sslmode=require"
         }
       }
     }
@@ -52,7 +52,6 @@ resource "google_cloud_run_service" "notes_service" {
   }
 
   depends_on = [
-    google_sql_database.notes_db,
     google_artifact_registry_repository.notes_repo,
     google_secret_manager_secret_iam_member.db_password_access,
     google_project_iam_member.cloud_sql_client

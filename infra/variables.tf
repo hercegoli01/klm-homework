@@ -15,3 +15,12 @@ data "google_project" "current" {
   project_id = var.project_id
 }
 
+variable "enable_cloudrun" {
+  type    = bool
+  default = true
+}
+
+variable "use_public_ip" {
+  type    = bool
+  default = true
+}

@@ -1,6 +1,7 @@
 # Cloud Run Invoker – bárki elérheti az API-t
 resource "google_cloud_run_service_iam_member" "invoker" {
-  service  = google_cloud_run_service.notes_service.name
+  count    = var.enable_cloudrun ? 1 : 0
+  service  = try(google_cloud_run_service.notes_service[0].name, "")
   location = var.region
   project  = var.project_id
   role     = "roles/run.invoker"
@@ -20,3 +21,11 @@ resource "google_project_iam_member" "cloud_sql_client" {
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.notes_sa.email}"
 }
+
+# Terraform SA kap network admin jogot
+resource "google_project_iam_member" "tf_sa_network_admin" {
+  project = var.project_id
+  role    = "roles/compute.networkAdmin"
+  member  = "serviceAccount:terraform-sa@${var.project_id}.iam.gserviceaccount.com"
+}
+

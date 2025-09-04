@@ -18,11 +18,12 @@ resource "google_project_iam_member" "notes_sa_secret_accessor" {
   member  = "serviceAccount:${google_service_account.notes_sa.email}"
 }
 
-# Cloud Run API invoker – NEM allUsers, hanem csak saját service account
 resource "google_cloud_run_service_iam_member" "notes_invoker" {
+  count    = var.enable_cloudrun ? 1 : 0
   project  = var.project_id
   location = var.region
-  service  = google_cloud_run_service.notes_service.name
+  service  = try(google_cloud_run_service.notes_service[0].name, "")
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.notes_sa.email}"
 }
+

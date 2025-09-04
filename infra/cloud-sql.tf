@@ -5,7 +5,12 @@ resource "google_sql_database_instance" "notes_instance" {
   database_version = "POSTGRES_14"
 
   settings {
-    tier = "db-f1-micro" # cheapest for demo
+    tier = "db-f1-micro"
+
+    ip_configuration {
+      ipv4_enabled    = var.use_public_ip
+      private_network = var.use_public_ip ? null : google_compute_network.notes_vpc.id
+    }
   }
 
   deletion_protection = false
