@@ -36,11 +36,11 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
       - run: |
-          BUCKET=${{ env.PROJECT_ID }}-tfstate
-          if ! gcloud storage buckets describe gs://$BUCKET --project=${{ env.PROJECT_ID }} >/dev/null 2>&1; then
-            gcloud storage buckets create gs://$BUCKET \
-              --project=${{ env.PROJECT_ID }} \
-              --location=${{ env.REGION }} \
+          BUCKET="${PROJECT_ID}-tfstate"
+          if ! gcloud storage buckets describe "gs://$BUCKET" --project="$PROJECT_ID" >/dev/null 2>&1; then
+            gcloud storage buckets create "gs://$BUCKET" \
+              --project="$PROJECT_ID" \
+              --location="$REGION" \
               --uniform-bucket-level-access
           fi
 
@@ -51,15 +51,15 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_VAR_project_id: ${{ env.PROJECT_ID }}
-      TF_VAR_region: ${{ env.REGION }}
+      TF_VAR_project_id: $PROJECT_ID
+      TF_VAR_region: $REGION
       TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
-      - run: terraform init
+      - run: terraform init -input=false
       - run: terraform fmt -check
       - run: terraform validate
       - run: terraform plan
@@ -71,21 +71,22 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_VAR_project_id: ${{ env.PROJECT_ID }}
-      TF_VAR_region: ${{ env.REGION }}
+      TF_VAR_project_id: $PROJECT_ID
+      TF_VAR_region: $REGION
       TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
-      - run: terraform init
-      - run: terraform apply \
-          -target=google_artifact_registry_repository.notes_repo \
-          -target=google_service_account.notes_sa \
-          -target=google_secret_manager_secret.db_password \
-          -target=google_secret_manager_secret_version.db_password_version \
-          -auto-approve
+      - run: terraform init -input=false
+      - run: |
+          terraform apply \
+            -target=google_artifact_registry_repository.notes_repo \
+            -target=google_service_account.notes_sa \
+            -target=google_secret_manager_secret.db_password \
+            -target=google_secret_manager_secret_version.db_password_version \
+            -auto-approve
 
   test:
     runs-on: ubuntu-latest
@@ -111,8 +112,9 @@ jobs:
           export_default_credentials: true
       - run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev -q
       - run: |
-          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}"
+          IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE}:${TAG}"
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+      - run: chmod +x ./build_push.sh
       - run: ./build_push.sh
 
   terraform-apply-app:
@@ -122,15 +124,15 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_VAR_project_id: ${{ env.PROJECT_ID }}
-      TF_VAR_region: ${{ env.REGION }}
+      TF_VAR_project_id: $PROJECT_ID
+      TF_VAR_region: $REGION
       TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
-      - run: terraform init
+      - run: terraform init -input=false
       - run: terraform apply -auto-approve
 
   smoke-test:
@@ -140,11 +142,20 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_VAR_project_id: ${{ env.PROJECT_ID }}
-      TF_VAR_region: ${{ env.REGION }}
+      TF_VAR_project_id: $PROJECT_ID
+      TF_VAR_region: $REGION
       TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - run: terraform init -input=false
       - run: |
           GATEWAY_URL=$(terraform output -raw api_gateway_url)
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$GATEWAY_URL/notes")
@@ -159,8 +170,8 @@ jobs:
       run:
         working-directory: infra
     env:
-      TF_VAR_project_id: ${{ env.PROJECT_ID }}
-      TF_VAR_region: ${{ env.REGION }}
+      TF_VAR_project_id: $PROJECT_ID
+      TF_VAR_region: $REGION
       TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
     steps:
       - uses: actions/checkout@v4
@@ -172,5 +183,5 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-      - run: terraform init
+      - run: terraform init -input=false
       - run: terraform destroy -auto-approve
