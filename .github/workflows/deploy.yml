@@ -12,7 +12,6 @@ env:
   REPO: notes-api
   IMAGE: notes-api
   TAG: latest
-  IMAGE_URI: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}
 
 jobs:
   setup:
@@ -99,6 +98,9 @@ jobs:
     needs: [terraform-apply-foundation, test]
     steps:
       - uses: actions/checkout@v4
+      - run: |
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}"
+          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
       - run: ./build_push.sh
 
   terraform-apply-app:
