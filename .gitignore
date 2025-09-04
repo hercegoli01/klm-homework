@@ -14,6 +14,7 @@ cred.json
 .terraform.tfstate.lock.info
 crash.log
 crash.*.log
+terraform.tfvars
 
 # OS junk
 .DS_Store
