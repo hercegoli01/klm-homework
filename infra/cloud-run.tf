@@ -57,3 +57,5 @@ resource "google_cloud_run_service" "notes_service" {
     google_project_iam_member.cloud_sql_client
   ]
 }
+
+
