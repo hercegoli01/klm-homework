@@ -6,7 +6,6 @@ resource "google_cloud_run_service" "notes_service" {
   template {
     metadata {
       annotations = {
-        # Cloud Run → Cloud SQL kapcsolat (socket mount)
         "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.notes_instance.connection_name
       }
     }
