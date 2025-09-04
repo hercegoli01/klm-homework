@@ -5,7 +5,7 @@ resource "google_sql_database_instance" "notes_instance" {
   database_version = "POSTGRES_14"
 
   settings {
-    tier = "db-f1-micro" # cheapest for demo
+    tier = "db-f1-micro"
   }
 
   deletion_protection = false

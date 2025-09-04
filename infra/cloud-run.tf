@@ -37,7 +37,6 @@ resource "google_cloud_run_service" "notes_service" {
           value = google_sql_database.notes_db.name
         }
 
-        # opcionális, ha a kód DB_CONN változót vár
         env {
           name  = "DB_CONN"
           value = google_sql_database_instance.notes_instance.connection_name
@@ -53,6 +52,7 @@ resource "google_cloud_run_service" "notes_service" {
 
   depends_on = [
     google_sql_database.notes_db,
+    google_sql_user.notes_user,
     google_artifact_registry_repository.notes_repo,
     google_secret_manager_secret_iam_member.db_password_access,
     google_project_iam_member.cloud_sql_client

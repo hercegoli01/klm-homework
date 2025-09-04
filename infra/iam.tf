@@ -20,3 +20,11 @@ resource "google_project_iam_member" "cloud_sql_client" {
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.notes_sa.email}"
 }
+
+resource "google_cloud_run_service_iam_member" "gateway_invoker" {
+  project  = var.project_id
+  location = var.region
+  service  = google_cloud_run_service.notes_service.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-apigateway.iam.gserviceaccount.com"
+}
