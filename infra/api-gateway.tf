@@ -10,7 +10,7 @@ resource "google_api_gateway_api_config" "notes_api_config" {
 
   openapi_documents {
     document {
-      path     = "openapi.yaml"
+      path = "openapi.yaml"
       contents = base64encode(
         templatefile("${path.module}/openapi.yaml.tpl", {
           cloud_run_url = google_cloud_run_service.notes_service.status[0].url

@@ -1,4 +1,4 @@
-project_id = "homework-klm"
+project_id  = "homework-klm"
 db_password = "password"
-region = "us-east1"
+region      = "us-east1"
 

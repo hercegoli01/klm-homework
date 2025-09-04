@@ -3,7 +3,7 @@ variable "project_id" {
 }
 
 variable "region" {
-  type    = string
+  type = string
 }
 
 variable "db_password" {
