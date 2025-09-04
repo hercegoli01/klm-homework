@@ -7,16 +7,20 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+   backend "gcs" {
+    bucket = "homework-klm-tfstate"
+    prefix = "notes-api"
+  }
 }
+
 
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = file("cred.json")
 }
 
 provider "google-beta" {
   project     = var.project_id
   region      = var.region
-  credentials = file("cred.json")
 }

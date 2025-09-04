@@ -24,7 +24,6 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ env.PROJECT_ID }}
-      - run: gcloud auth list
       - run: gcloud config set project "$PROJECT_ID"
       - run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev -q
 
@@ -39,7 +38,6 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ env.PROJECT_ID }}
-      - run: gcloud auth list
       - run: gcloud config set project "$PROJECT_ID"
       - run: |
           BUCKET="${PROJECT_ID}-tfstate"
@@ -66,7 +64,7 @@ jobs:
         with:
           terraform_version: 1.9.5
       - run: terraform init -input=false
-      - run: terraform fmt -check
+      - run: terraform fmt -recursive
       - run: terraform validate
       - run: terraform plan
 
