@@ -1,9 +1,6 @@
 name: Deploy Notes API
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 env:
