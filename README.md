@@ -62,17 +62,8 @@ README.md – this file
 
 ## Architecture
 
-```mermaid
-flowchart TD
-  Client((Client)) --> APIGW[API Gateway]
-  APIGW --> CR[Cloud Run (FastAPI)]
-  CR -->|Cloud SQL Auth Proxy| DB[(Cloud SQL - Postgres)]
-  CR --> SM[Secret Manager]
-  CI[GitHub Actions] -->|Build & Deploy| CR
-  CI --> TF[Terraform + GCS backend]
-  AR[Artifact Registry] --> CR
-  CI --> AR
-```
+
+![Architecture diagram](arch.png)
 
 ### Components
 
