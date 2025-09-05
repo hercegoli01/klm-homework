@@ -15,8 +15,7 @@ A small note‑taking REST API you can run locally with Docker Compose and deplo
 
 ---
 
-```
-Notes API (FastAPI + Docker + Terraform on GCP)
+### Notes API (FastAPI + Docker + Terraform on GCP)
 
 A small note‑taking REST API you can run locally with Docker Compose and deploy to Google Cloud with Terraform. CI/CD is handled by GitHub Actions (deploy + destroy workflows).
 
