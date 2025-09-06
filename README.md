@@ -63,7 +63,7 @@ README.md – this file
 ## Architecture
 
 
-![Architecture diagram](arch.png)
+![Architecture diagram](./KLM-homework.drawio.png)
 
 ### Components
 
