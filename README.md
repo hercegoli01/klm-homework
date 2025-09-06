@@ -3,7 +3,12 @@
 A small note‑taking REST API you can run locally with Docker Compose and deploy to Google Cloud with Terraform. CI/CD is handled by GitHub Actions (deploy + destroy workflows).
 
 ---
+## Architecture
 
+
+![Architecture diagram](./KLM-homework.drawio.png)
+
+---
 ## TL;DR
 
 * **Language/Framework:** Python / FastAPI
@@ -57,13 +62,7 @@ klm-homework/
 * **build_push.sh** – Local helper for building/pushing image
 * **requirements.txt** – Python dependencies
 
-README.md – this file
 ---
-
-## Architecture
-
-
-![Architecture diagram](./KLM-homework.drawio.png)
 
 ### Components
 
