@@ -22,7 +22,6 @@ def get_db():
 
 @app.on_event("startup")
 def on_startup():
-    # Csak akkor próbáljon DB-hez kapcsolódni, amikor az app már fut
     try:
         models.Base.metadata.create_all(bind=database.engine)
     except Exception as e:
